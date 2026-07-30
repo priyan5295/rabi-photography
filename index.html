@@ -301,6 +301,72 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:0;}
     flex: 1 1 100%;
   }
 }
+
+  /* success-popup */
+    .success-popup{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.75);
+      backdrop-filter:blur(8px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+    
+      opacity:0;
+      visibility:hidden;
+      transition:.35s;
+    }
+    
+    .success-popup.show{
+      opacity:1;
+      visibility:visible;
+    }
+    
+    .success-card{
+      width:min(420px,90%);
+      background:#12100c;
+      border:1px solid rgba(212,175,55,.35);
+      border-radius:20px;
+      padding:45px 35px;
+      text-align:center;
+      box-shadow:0 20px 50px rgba(0,0,0,.45);
+    }
+    
+    .success-logo{
+      width:180px;
+      margin:0 auto 20px;
+      display:block;
+    }
+    
+    .success-card h2{
+      color:#fff;
+      font-size:2rem;
+      margin-bottom:12px;
+    }
+    
+    .success-main{
+      color:#d4af37;
+      font-size:1.15rem;
+      font-weight:600;
+      line-height:1.6;
+    }
+    
+    .success-sub{
+      color:#c7c7c7;
+      margin:20px 0 35px;
+      line-height:1.8;
+      font-size:.95rem;
+    }
+    
+    #successBtn{
+      width:170px;
+      height:50px;
+      border:none;
+      cursor:pointer;
+    }
+  /* success-popup */
+  
 </style>
 </head>
 <body>
@@ -752,6 +818,25 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:0;}
   </div>
 </div>
 
+  <!-- Success Popup -->
+<div id="successPopup" class="success-popup">
+  <div class="success-card">
+    <!-- Replace with your logo -->
+    <img src="images/logo.png" alt="Rabi Photography" class="success-logo">
+    <h2>Thank You!</h2>
+    <p class="success-main">
+      Your enquiry has been sent successfully.
+    </p>
+    <p class="success-sub">
+      We appreciate your interest in <strong>Rabi Photography</strong>.<br>
+      Our team will contact you within 24 hours to discuss your booking.
+    </p>
+    <button id="successBtn" class="btn-gold">
+      OK
+    </button>
+  </div>
+</div>
+
 <!-- SCROLL TO BOTTOM BUTTON (DSLR camera icon) -->
 <a id="scrollDownBtn" href="#contact" title="Scroll to bottom"
   style="position:fixed;right:1.5rem;bottom:5rem;z-index:999;width:35px;height:35px;border-radius:50%;background:rgba(17,14,9,0.92);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:opacity 0.3s,transform 0.3s,border-color 0.2s;opacity:0;pointer-events:none;box-shadow:0 2px 12px rgba(0,0,0,0.5);">
@@ -830,6 +915,7 @@ const obs=new IntersectionObserver((entries)=>{
 },{threshold:0.12});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
+  // forms
 document.querySelector('.form-grid').addEventListener('submit', async function (e) {
   e.preventDefault();
 
@@ -883,11 +969,16 @@ document.querySelector('.form-grid').addEventListener('submit', async function (
   });
 
   if (response.ok) {
-    alert("Thank you! Your enquiry has been sent.");
     form.reset();
+    document.getElementById("successPopup").classList.add("show");
   } else {
     alert("Something went wrong. Please try again.");
   }
+});
+
+  //success button
+  document.getElementById("successBtn").addEventListener("click", function () {
+    document.getElementById("successPopup").classList.remove("show");
 });
 
   // Year changes
