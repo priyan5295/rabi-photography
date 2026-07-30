@@ -606,7 +606,10 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:0;}
 
     <div class="contact-form-box reveal">
       <h3>Book a Shoot</h3>
-      <form class="form-grid" action="https://formspree.io/f/xkodeaqq" method="POST">
+      <form class="form-grid" action="https://formspree.io/f/xkodeaqq" method="POST" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="_next" value="https://rabi-photography.vercel.app/"/>
+        <input type="hidden" name="_subject" value="New booking enquiry — Rabi Photography"/>
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off"/>
         <div class="form-row2">
           <div class="form-group">
             <label>Your Name</label>
