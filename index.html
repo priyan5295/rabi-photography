@@ -830,73 +830,64 @@ const obs=new IntersectionObserver((entries)=>{
 },{threshold:0.12});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-// Form
-// ── RABI FORM VALIDATION ──
-document.querySelector('.form-grid').addEventListener('submit', async (e) => {
+document.querySelector('.form-grid').addEventListener('submit', async function (e) {
   e.preventDefault();
 
+  const form = e.currentTarget; // <-- இதை add பண்ணுங்க
+
   // Clear previous errors
-  this.querySelectorAll('.rabi-err-msg').forEach(el=>el.remove());
-  this.querySelectorAll('.rabi-field-err').forEach(el=>el.classList.remove('rabi-field-err'));
+  form.querySelectorAll('.rabi-err-msg').forEach(el => el.remove());
+  form.querySelectorAll('.rabi-field-err').forEach(el => el.classList.remove('rabi-field-err'));
 
-  const fields=this.querySelectorAll('input[required],select[required],textarea[required]');
-  let valid=true;
+  const fields = form.querySelectorAll('input[required],select[required],textarea[required]');
+  let valid = true;
 
-  fields.forEach(field=>{
-    if(!field.value.trim()){
-      valid=false;
+  fields.forEach(field => {
+    if (!field.value.trim()) {
+      valid = false;
       field.classList.add('rabi-field-err');
 
-      const msg=document.createElement('span');
-      msg.className='rabi-err-msg';
-      msg.textContent='This field is required';
+      const msg = document.createElement('span');
+      msg.className = 'rabi-err-msg';
+      msg.textContent = 'This field is required';
       field.parentNode.appendChild(msg);
     }
   });
 
-  const phone=this.querySelector('input[name="phone"]');
+  const phone = form.querySelector('input[name="phone"]');
 
-  if(phone && phone.value.trim() && !/^[\d\s+\-]{10,15}$/.test(phone.value.trim())){
-      valid=false;
-      phone.classList.add('rabi-field-err');
+  if (phone && phone.value.trim() && !/^[\d\s+\-]{10,15}$/.test(phone.value.trim())) {
+    valid = false;
+    phone.classList.add('rabi-field-err');
 
-      const msg=document.createElement('span');
-      msg.className='rabi-err-msg';
-      msg.textContent='Enter a valid phone number';
-      phone.parentNode.appendChild(msg);
+    const msg = document.createElement('span');
+    msg.className = 'rabi-err-msg';
+    msg.textContent = 'Enter a valid phone number';
+    phone.parentNode.appendChild(msg);
   }
 
-  if(!valid){
-      this.querySelector('.rabi-field-err')?.scrollIntoView({
-          behavior:'smooth',
-          block:'center'
-      });
-      return;
+  if (!valid) {
+    form.querySelector('.rabi-field-err')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+    return;
   }
 
-  const response = await fetch(this.action,{
-      method:'POST',
-      body:new FormData(this),
-      headers:{
-          'Accept':'application/json'
-      }
+  const response = await fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    headers: {
+      Accept: 'application/json'
+    }
   });
 
-  if(response.ok){
-      alert("Thank you! Your enquiry has been sent.");
-      this.reset();
-  }else{
-      alert("Something went wrong. Please try again.");
+  if (response.ok) {
+    alert("Thank you! Your enquiry has been sent.");
+    form.reset();
+  } else {
+    alert("Something went wrong. Please try again.");
   }
-  
-});
-
-// Clear error on input
-document.querySelectorAll('.form-grid input, .form-grid select, .form-grid textarea').forEach(field=>{
-  field.addEventListener('input',function(){
-    this.classList.remove('rabi-field-err');
-    this.parentNode.querySelector('.rabi-err-msg')?.remove();
-  });
 });
 
   // Year changes
