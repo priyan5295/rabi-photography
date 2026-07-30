@@ -287,6 +287,10 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:0;}
       0%{transform:scale(0.7);opacity:0;}
       100%{transform:scale(1);opacity:1;}
     }
+
+  /* ── FORM VALIDATION ── */
+.rabi-field-err{border-color:#c0392b !important;box-shadow:0 0 0 1px #c0392b !important;}
+.rabi-err-msg{font-size:0.65rem;color:#e74c3c;margin-top:4px;display:block;letter-spacing:0.05em;}
 </style>
 </head>
 <body>
@@ -613,20 +617,20 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:0;}
         <div class="form-row2">
           <div class="form-group">
             <label>Your Name</label>
-            <input type="text" placeholder="Ravi Kumar" required/>
+            <input type="text" name="name" placeholder="Rabi Barnad" required/>
           </div>
           <div class="form-group">
             <label>Phone Number</label>
-            <input type="tel" placeholder="+91 98765 43210" required/>
+            <input type="tel" name="phone" placeholder="+91 98765 43210" required/>
           </div>
         </div>
         <div class="form-group">
           <label>Email Address</label>
-          <input type="email" placeholder="you@email.com"/>
+          <input type="email" name="email" placeholder="you@email.com" required/>
         </div>
         <div class="form-group">
           <label>Type of Shoot</label>
-          <select required>
+          <select name="service" required>
             <option value="" disabled selected>Select service</option>
             <option>Wedding Photography</option>
             <option>Pre-Wedding Shoot</option>
@@ -642,16 +646,16 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:0;}
         <div class="form-row2">
           <div class="form-group">
             <label>Event Date</label>
-            <input type="date"/>
+            <input type="date" name="event_date"/>
           </div>
           <div class="form-group">
             <label>Location / City</label>
-            <input type="text" placeholder="Chennai, Tamil Nadu"/>
+            <input type="text" name="location" placeholder="Chennai, Tamil Nadu"/>
           </div>
         </div>
         <div class="form-group">
           <label>Message</label>
-          <textarea placeholder="Tell us about your event, vision, or any questions..."></textarea>
+          <textarea name="message" placeholder="Tell us about your event, vision, or any questions..."></textarea>
         </div>
         <button type="submit" class="btn-gold form-submit">
           Send Enquiry
@@ -817,13 +821,53 @@ const obs=new IntersectionObserver((entries)=>{
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
 // Form
-function handleForm(e){
-  e.preventDefault();
-  const btn=e.target.querySelector('.form-submit');
-  btn.innerHTML='Enquiry Sent ✓';
-  btn.style.background='#4a7c59';
-  btn.disabled=true;
-}
+// ── RABI FORM VALIDATION ──
+document.querySelector('.form-grid').addEventListener('submit',function(e){
+  // Clear previous errors
+  this.querySelectorAll('.rabi-err-msg').forEach(el=>el.remove());
+  this.querySelectorAll('.rabi-field-err').forEach(el=>el.classList.remove('rabi-field-err'));
+
+  // Check required fields
+  const fields=this.querySelectorAll('input[required],select[required],textarea[required]');
+  let valid=true;
+
+  fields.forEach(field=>{
+    if(!field.value.trim()){
+      valid=false;
+      field.classList.add('rabi-field-err');
+      const msg=document.createElement('span');
+      msg.className='rabi-err-msg';
+      msg.textContent='This field is required';
+      field.parentNode.appendChild(msg);
+    } else {
+      field.classList.remove('rabi-field-err');
+    }
+  });
+
+  // Phone number format check
+  const phone=this.querySelector('input[name="phone"]');
+  if(phone && phone.value.trim() && !/^[\d\s\+\-]{10,15}$/.test(phone.value.trim())){
+    valid=false;
+    phone.classList.add('rabi-field-err');
+    const msg=document.createElement('span');
+    msg.className='rabi-err-msg';
+    msg.textContent='Enter a valid phone number';
+    phone.parentNode.appendChild(msg);
+  }
+
+  if(!valid){
+    e.preventDefault();
+    this.querySelector('.rabi-field-err')?.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+});
+
+// Clear error on input
+document.querySelectorAll('.form-grid input, .form-grid select, .form-grid textarea').forEach(field=>{
+  field.addEventListener('input',function(){
+    this.classList.remove('rabi-field-err');
+    this.parentNode.querySelector('.rabi-err-msg')?.remove();
+  });
+});
 
   // Year changes
   document.getElementById("versions-year").textContent = new Date().getFullYear();
