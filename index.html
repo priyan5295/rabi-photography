@@ -239,10 +239,59 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:0;}
   .footer-top{grid-template-columns:1fr;}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}
+
+  /* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:5000;
+  background:rgba(10,8,5,0.92);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity 0.3s,visibility 0.3s;
+  padding:1.5rem;
+}
+.modal-overlay.open{opacity:1;visibility:visible;}
+.modal-box{
+  background:#1a1508;border:1px solid var(--border);
+  border-radius:6px;padding:2.5rem;max-width:600px;width:100%;
+  max-height:80vh;overflow-y:auto;position:relative;
+}
+.modal-box h2{
+  font-family:'Playfair Display',serif;font-size:1.4rem;
+  color:var(--white);margin-bottom:1.5rem;padding-right:2rem;
+}
+.modal-box p{font-size:0.85rem;color:var(--muted);line-height:1.8;margin-bottom:1rem;}
+.modal-box h3{font-size:0.95rem;color:var(--text);margin:1.2rem 0 0.4rem;}
+.modal-close{
+  position:absolute;top:1rem;right:1.2rem;
+  background:none;border:none;color:var(--muted);
+  font-size:1.4rem;cursor:pointer;line-height:1;
+  transition:color 0.2s;
+}
+.modal-close:hover{color:var(--gold);}
+
+  /* ── SPLASH SCREEN ── */
+    #splash{
+      position:fixed;inset:0;z-index:9999;
+      background:#0a0805;
+      display:flex;align-items:center;justify-content:center;
+      transition:opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #splash.hide{opacity:0;visibility:hidden;}
+    #splash img{
+      width:220px;height:220px;object-fit:contain;
+      animation:splashPop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes splashPop{
+      0%{transform:scale(0.7);opacity:0;}
+      100%{transform:scale(1);opacity:1;}
+    }
 </style>
 </head>
 <body>
 
+<div id="splash">
+  <img src="images/rabi_photography.png" alt="Rabi Photography"/>
+</div>
+  
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="/" onclick="closeMobile()">Home</a>
@@ -639,11 +688,49 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:0;}
   <div class="footer-bottom">
     <span class="footer-copy">© <span id="versions-year"></span>  Rabi Photography. All rights reserved.</span>
     <div class="footer-policy">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
+      <a href="#" onclick="openModal('privacyModal');return false;">Privacy Policy</a>
+      <a href="#" onclick="openModal('termsModal');return false;">Terms of Service</a>
     </div>
   </div>
 </footer>
+
+  <!-- PRIVACY MODAL -->
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('privacyModal')">✕</button>
+    <h2>Privacy Policy</h2>
+    <p>Last updated: July 2025</p>
+    <h3>Information We Collect</h3>
+    <p>When you submit our contact form, we collect your name, phone number, email address, event details, and message. This information is used solely to respond to your enquiry.</p>
+    <h3>How We Use Your Information</h3>
+    <p>Your details are used only to contact you regarding your photography booking. We do not sell, share, or distribute your personal information to any third parties.</p>
+    <h3>Data Storage</h3>
+    <p>Form submissions are securely processed via Formspree. We do not store your data on our servers beyond what is necessary to respond to your enquiry.</p>
+    <h3>Cookies</h3>
+    <p>This website does not use tracking cookies or analytics tools.</p>
+    <h3>Contact</h3>
+    <p>For any privacy concerns, email us at rabiphotography8@gmail.com</p>
+  </div>
+</div>
+
+<!-- TERMS MODAL -->
+<div class="modal-overlay" id="termsModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('termsModal')">✕</button>
+    <h2>Terms of Service</h2>
+    <p>Last updated: July 2025</p>
+    <h3>Booking & Payment</h3>
+    <p>All bookings are confirmed upon receipt of an advance payment. The advance amount will be discussed and agreed upon before the event date.</p>
+    <h3>Cancellation Policy</h3>
+    <p>Cancellations made 7+ days before the event may be eligible for a partial refund. Cancellations within 7 days of the event are non-refundable.</p>
+    <h3>Delivery</h3>
+    <p>Edited photos will be delivered within 7–10 working days after the event. Cinematic films and drone footage may take additional time.</p>
+    <h3>Copyright</h3>
+    <p>All photographs and videos remain the intellectual property of Rabi Photography. Images may be used for portfolio and promotional purposes unless otherwise agreed in writing.</p>
+    <h3>Contact</h3>
+    <p>For any queries, contact us at rabiphotography8@gmail.com</p>
+  </div>
+</div>
 
 <!-- SCROLL TO BOTTOM BUTTON (DSLR camera icon) -->
 <a id="scrollDownBtn" href="#contact" title="Scroll to bottom"
@@ -734,6 +821,32 @@ function handleForm(e){
 
   // Year changes
   document.getElementById("versions-year").textContent = new Date().getFullYear();
+
+// Splash screen
+setTimeout(()=>{
+  document.getElementById('splash').classList.add('hide');
+},3500);
+  
+// Modal
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow='';
+}
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{
+    if(e.target===m)closeModal(m.id);
+  });
+});
+// Close on Escape key
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>closeModal(m.id));
+});
+  
 </script>
 </body>
 </html>
